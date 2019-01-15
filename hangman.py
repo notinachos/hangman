@@ -7,26 +7,27 @@ import codecs
 import os
 from random import choice
 
-# I searched for the hardest hangman words and encoded them ROT13
-# so that reading the code wouldn't give away all the answers ;)
-words = [
-    'noorl', 'noehcgyl', 'nssvk', 'nfxrj', 'nkvbz', 'nmher', 'ontcvcrf', 'onaqjntba', 
-    'onawb', 'onlbh', 'ovxvav', 'oyvgm', 'obbxjbez', 'obkpne', 'obkshy', 'ohpxnebb', 
-    'ohssnyb', 'ohssbba', 'pbojro', 'pebdhrg', 'qnvdhvev', 'qvfnibj', 'qhcyrk', 'qjneirf', 
-    'rdhvc', 'rkbqhf', 'svfuubbx', 'svknoyr', 'sbktybir', 'tnynkl', 'tnyinavmr', 'tnmrob', 
-    'tvmzb', 'tybjjbez', 'thssnj', 'unvxh', 'uncunmneq', 'ulcura', 'vprobk', 'vawhel', 'vibel', 
-    'vil', 'wnhaqvpr', 'wnjoernxre', 'wnljnyx', 'wnmml', 'wvtfnj', 'wvhwvgfh', 'wbpxrl', 'wbivny', 
-    'wblshy', 'whvpl', 'whzob', 'xnmbb', 'xrlubyr', 'xunxv', 'xvybolgr', 'xvbfx', 'xvjvsehvg', 
-    'xancfnpx', 'ynelak', 'yhkhel', 'znedhvf', 'zrtnuregm', 'zvpebjnir', 'zlfgvsl', 'avtugpyho', 
-    'abjnqnlf', 'ahzofxhyy', 'binel', 'bkvqvmr', 'bkltra', 'cnwnzn', 'crrxnobb', 'cvkry', 'cvmnmm', 
-    'carhzbavn', 'cbyxn', 'dhnegm', 'dhvm', 'dhbehz', 'enmmzngnmm', 'euhoneo', 'evpxfunj', 
-    'fpuvmbcueravn', 'fcuvak', 'fcevgm', 'fdhnjx', 'fhojnl', 'fjviry', 'gbcnm', 'haxabja', 'hajbegul', 
-    'hamvc', 'hcgbja', 'incbevmr', 'ivkra', 'ibqxn', 'ibegrk', 'jnyxjnl', 'jnygm', 'jnil', 'jnkl', 
-    'jurrml', 'juvfxrl', 'jubzrire', 'jvzcl', 'jvmneq', 'jbbml', 'klybcubar', 'lnpugfzna', 'lvccrr', 
-    'lbhgushy', 'mrcule', 'mvtmnt', 'mvypu', 'mbqvnp', 'mbzovr', 'ihyarenovyvgl ', 'havagrerfgvat ', 
-    'furrcureqvat ', 'pbaqbzvavny ', 'fcrezbculgr', 'ntabfgvp', 'pryyhybfr', 'cubgbflagurfvf', 
-    'culfvbgurencl', 'ylak', 'tvenssr'
-]
+# a file containing ROT13 encoded words
+word_file = 'words.txt'
+
+# ascii main menu
+game_menu = '''
+ _____ 
+||    |
+||  _(xX)_
+|| | [--] |
+|| | [--] |
+|| o |  | o
+||   |  |
+||   d  b
+||
+=============
+H A N G M A N 
+=============
+(1) Start Game
+(2) Add New Word
+(3) Quit
+'''
 
 # ascii game board
 # you can add extra "frames" here to make the game easier
@@ -41,7 +42,7 @@ game_board = [
 ||
 ||
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -52,7 +53,7 @@ game_board = [
 ||
 ||
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -63,7 +64,7 @@ game_board = [
 ||
 ||
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -74,7 +75,7 @@ game_board = [
 ||
 ||
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -85,7 +86,7 @@ game_board = [
 ||
 ||
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -96,7 +97,7 @@ game_board = [
 ||
 ||
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -107,7 +108,7 @@ game_board = [
 ||   |
 ||   d
 ||
-============''',
+=============''',
 '''
  _____ 
 ||    |
@@ -118,7 +119,42 @@ game_board = [
 ||   |  |
 ||   d  b
 ||
-============''']
+=============''']
+
+
+def main_menu():
+    """ displays the main menu """
+    os.system('cls||clear')
+    choosing = True
+    print(game_menu)
+    while choosing:
+        option = input('Pick an option: ')
+        if option == '1':
+            choosing = False
+            os.system('cls||clear')
+            game_loop()
+        elif option == '2':
+            choosing = False
+            add_word()
+        elif option == '3':
+            choosing = False
+        else:
+            print('Invalid option! Try again.')
+
+
+def add_word():
+    """ adds new words to the game """
+    choosing = True
+    while choosing:
+        new_word = input("Type the word you'd like to add: ")
+        if len(new_word) < 4:
+            print('Words must be at least 4 characters long. Try again.')
+        else:
+            choosing = False
+            with open(word_file, 'a') as txt:
+                txt.write('\n' + codecs.encode(new_word, 'rot_13').lower().rstrip())
+                input('New word "{}" has been added to the game!'.format(new_word.lower().rstrip()))
+            main_menu()
 
 
 def game_loop():
@@ -128,7 +164,10 @@ def game_loop():
     game_over = False
     game_index = 0
     turn_counter = 0
-    challenge_word = codecs.decode(choice(words), 'rot_13')
+    challenge_word = ''
+    with open(word_file, 'r') as txt:
+        lines = txt.read().splitlines()
+        challenge_word = codecs.decode(choice(lines), 'rot_13')
     hidden_word = []
     guessed_letters = []
 
@@ -189,7 +228,6 @@ def game_loop():
 
 
 if __name__ == "__main__":
-    os.system('cls||clear')
-    game_loop()
+    main_menu()
     print('~ Thanks for playing! ~')
     exit(0)
