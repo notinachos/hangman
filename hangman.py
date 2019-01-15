@@ -152,8 +152,8 @@ def add_word():
         else:
             choosing = False
             with open(word_file, 'a') as txt:
-                txt.write('\n' + codecs.encode(new_word, 'rot_13').lower().rstrip())
-                input('New word "{}" has been added to the game!'.format(new_word.lower().rstrip()))
+                txt.write('\n' + codecs.encode(new_word, 'rot_13').lower().rstrip().lstrip())
+                input('New word "{}" has been added to the game!'.format(new_word.lower().rstrip().lstrip()))
             main_menu()
 
 
